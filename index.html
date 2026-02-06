@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Will you be my Valentine? 💘</title>
+  <style>
+    :root{
+      --bg1:#ffdde1;
+      --bg2:#ee9ca7;
+      --card:#ffffffcc;
+      --text:#2b2b2b;
+      --accent:#ff3b7a;
+      --accent2:#7c4dff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 20% 10%, var(--bg1), transparent),
+                  radial-gradient(900px 700px at 80% 20%, #ffd1dc, transparent),
+                  linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+
+    /* floating hearts background */
+    .heart {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: rgba(255, 59, 122, 0.25);
+      transform: rotate(45deg);
+      border-radius: 3px;
+      animation: floatUp linear infinite;
+      filter: blur(0.2px);
+    }
+    .heart:before, .heart:after{
+      content:"";
+      position:absolute;
+      width:14px;
+      height:14px;
+      background: rgba(255, 59, 122, 0.25);
+      border-radius: 50%;
+    }
+    .heart:before{ left:-7px; top:0; }
+    .heart:after{ left:0; top:-7px; }
+    @keyframes floatUp{
+      from { transform: translateY(20vh) rotate(45deg); opacity:0; }
+      15% { opacity:1; }
+      to { transform: translateY(-120vh) rotate(45deg); opacity:0; }
+    }
+
+    .card{
+      width:min(720px, 92vw);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.45);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 28px 22px;
+      box-shadow: 0 22px 60px rgba(0,0,0,.18);
+      text-align:center;
+      position:relative;
+    }
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: -0.02em;
+    }
+    p{
+      margin: 8px auto 18px;
+      font-size: clamp(16px, 2.2vw, 18px);
+      line-height:1.45;
+      max-width: 52ch;
+    }
+    .names{
+      display:inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,59,122,.12);
+      border: 1px dashed rgba(255,59,122,.35);
+      font-weight:600;
+      margin: 6px 0 14px;
+    }
+
+    .buttons{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    button{
+      border:0;
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight:700;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease, opacity .2s ease;
+      min-width: 140px;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    #yesBtn{
+      background: linear-gradient(135deg, var(--accent), #ff7aa8);
+      color:white;
+      box-shadow: 0 12px 22px rgba(255,59,122,.25);
+    }
+    #yesBtn:hover{ transform: translateY(-1px); }
+
+    #noBtn{
+      background: rgba(124,77,255,.12);
+      color: #3b2b8f;
+      border: 1px solid rgba(124,77,255,.25);
+      box-shadow: 0 10px 18px rgba(124,77,255,.12);
+      position: relative;
+    }
+
+    .footer{
+      margin-top: 14px;
+      font-size: 13px;
+      opacity: .75;
+    }
+
+    /* modal */
+    .modalWrap{
+      position:fixed;
+      inset:0;
+      display:none;
+      place-items:center;
+      background: rgba(0,0,0,.35);
+      padding: 22px;
+      z-index: 50;
+    }
+    .modal{
+      width:min(640px, 96vw);
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 26px 80px rgba(0,0,0,.28);
+      text-align:center;
+    }
+    .big{
+      font-size: clamp(22px, 3.6vw, 34px);
+      margin: 0 0 8px;
+    }
+    .sub{
+      margin: 0 auto 14px;
+      max-width: 54ch;
+    }
+    .badge{
+      display:inline-block;
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: rgba(255,59,122,.10);
+      border-radius: 14px;
+      font-weight:700;
+    }
+
+    /* confetti hearts */
+    .confetti{
+      position: fixed;
+      left: 50%;
+      top: -10px;
+      width: 10px;
+      height: 10px;
+      transform: translateX(-50%) rotate(45deg);
+      background: rgba(255, 59, 122, 0.9);
+      z-index: 60;
+      border-radius: 2px;
+      animation: fall 1.8s linear forwards;
+    }
+    .confetti:before, .confetti:after{
+      content:"";
+      position:absolute;
+      width:10px;height:10px;
+      background: rgba(255, 59, 122, 0.9);
+      border-radius:50%;
+    }
+    .confetti:before{ left:-5px; top:0; }
+    .confetti:after{ left:0; top:-5px; }
+    @keyframes fall{
+      to{
+        transform: translateX(var(--dx)) translateY(110vh) rotate(45deg);
+        opacity:0;
+      }
+    }
+
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+  <!-- background hearts -->
+  <div id="bgHearts"></div>
+
+  <main class="card" aria-label="Valentine card">
+    <div class="names" id="namesLabel">From: Your Name 💌 To: Her Name</div>
+    <h1 id="title">Will you be my Valentine? 💘</h1>
+    <p id="message">
+      I was going to write something super poetic… but honestly I just want to spend
+      Valentine’s with you. 🌹
+    </p>
+
+    <div class="buttons">
+      <button id="yesBtn">Yes 💖</button>
+      <button id="noBtn">No 🙈</button>
+    </div>
+
+    <div class="footer">
+      Tip: You can customize the names + message inside the code ✨
+    </div>
+  </main>
+
+  <!-- popup -->
+  <section class="modalWrap" id="modalWrap" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <h2 class="big" id="modalTitle">YAY!!! 💞💞💞</h2>
+      <p class="sub" id="modalText">
+        Best decision ever. I can’t wait to celebrate with you 😚
+      </p>
+      <div class="badge" id="planText">Plan:Dinner+movie+nightwalk😚</div>
+      <div style="margin-top:16px;">
+        <button id="closeBtn" style="background: #111; color:#fff; min-width: 160px;">Close</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ====== Customize these ======
+    const yourName = "Javier😚";
+    const herName  = "Audrey💞";
+    const mainMessage = "⸜(｡˃ ᵕ ˂ )⸝♡ 🌹";
+    const planLine = "Plan:Dinner+movie+nightwalk😚";
+    // =============================
+
+    // Apply custom text
+    document.getElementById("namesLabel").textContent = `From: ${yourName} 💌 To: ${herName}`;
+    document.getElementById("message").textContent = mainMessage;
+    document.getElementById("planText").textContent = planLine;
+
+    // Background hearts generator
+    const bg = document.getElementById("bgHearts");
+    const heartCount = 28;
+    for (let i=0; i<heartCount; i++){
+      const h = document.createElement("div");
+      h.className = "heart";
+      const size = 10 + Math.random()*18;
+      h.style.width = size + "px";
+      h.style.height = size + "px";
+      h.style.left = Math.random()*100 + "vw";
+      h.style.bottom = (-10 - Math.random()*40) + "vh";
+      h.style.animationDuration = (6 + Math.random()*8) + "s";
+      h.style.animationDelay = (Math.random()*6) + "s";
+      h.style.opacity = 0.2 + Math.random()*0.4;
+      bg.appendChild(h);
+    }
+
+    // Buttons
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const modalWrap = document.getElementById("modalWrap");
+    const closeBtn = document.getElementById("closeBtn");
+
+    yesBtn.addEventListener("click", () => {
+      modalWrap.style.display = "grid";
+      burstConfetti(70);
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modalWrap.style.display = "none";
+    });
+
+    // Cute "No" button dodge (not too aggressive)
+    let dodges = 0;
+    const noTexts = [
+      "No 🙈",
+      "alaaaaaa 🥺",
+      "betull ba??? 😳",
+      "okayyy jappp… 😭",
+      "Pleaseeeeeee? 💗"
+    ];
+
+    noBtn.addEventListener("mouseenter", () => {
+      dodges++;
+      noBtn.textContent = noTexts[Math.min(dodges, noTexts.length-1)];
+
+      // Move within the card area
+      const card = document.querySelector(".card");
+      const rect = card.getBoundingClientRect();
+
+      const maxX = rect.width - noBtn.offsetWidth - 24;
+      const maxY = rect.height - noBtn.offsetHeight - 24;
+
+      const x = 12 + Math.random()*maxX;
+      const y = 12 + Math.random()*maxY;
+
+      noBtn.style.position = "absolute";
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+
+      // If she keeps trying, eventually let it be clickable
+      if (dodges >= 5){
+        noBtn.style.opacity = "0.6";
+        noBtn.style.position = "relative";
+        noBtn.style.left = "0";
+        noBtn.style.top = "0";
+      }
+    });
+
+    noBtn.addEventListener("click", () => {
+      // Respectful "No" outcome
+      document.getElementById("title").textContent = "hmmmmmm (˚ ˃̣̣̥⌓˂̣̣̥ ) 💛";
+      document.getElementById("message").textContent = "JAHATTT OHH HMM";
+      noBtn.disabled = true;
+      noBtn.style.opacity = "0.6";
+    });
+
+    // Confetti hearts
+    function burstConfetti(n){
+      for (let i=0; i<n; i++){
+        const c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = (Math.random()*100) + "vw";
+        c.style.setProperty("--dx", ((Math.random()*2-1)*220) + "px");
+        c.style.animationDuration = (1.2 + Math.random()*1.4) + "s";
+        c.style.opacity = 0.7 + Math.random()*0.3;
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 2200);
+      }
+    }
+  </script>
+</body>
+</html>
